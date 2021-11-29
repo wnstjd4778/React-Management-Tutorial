@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Customer from './components/Customer';
 import Table from '@material-ui/core/Table';
@@ -8,7 +7,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
-import { render } from 'react-dom';
 import { Component } from 'react';
 
 const styles = theme => ({
@@ -22,33 +20,26 @@ const styles = theme => ({
   }
 })
 
-const customer = [{
-  'id' : '1',
-  'image' : 'https://placeimg.com/64/64/any',
-  'name' : '홍길동',
-  'birthday' : '96122',
-  'gender' : '남자',
-  'job' : '대학생'
-},
-{
-  'id' : '2',
-  'image' : 'https://placeimg.com/64/64/any',
-  'name' : '길동',
-  'birthday' : '96122',
-  'gender' : '남자',
-  'job' : '대학생'
-},
-{
-  'id' : '3',
-  'image' : 'https://placeimg.com/64/64/any',
-  'name' : '동',
-  'birthday' : '96122',
-  'gender' : '남자',
-  'job' : '대학생'
-},
-]
-
 class App extends Component {
+
+  state = {
+    customers: ""
+  }
+
+  componentDidMount() {
+    this.callApi()
+      .then(res => {
+        this.setState({customers: res})
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+  callApi = async () => {
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
   render() {
   const {classes} = this.props;
   return (
@@ -65,8 +56,8 @@ class App extends Component {
                 </TableRow>
               </TableHead>  
               <TableBody>
-                    {
-              customer.map(c => {
+             {this.state.customers ?
+              this.state.customer.map(c => {
                 return (
                   <Customer
                   key={c.id}
@@ -78,7 +69,7 @@ class App extends Component {
                   job = {c.job}
                   />
                 );
-              })
+              }): ""
             }                
               </TableBody>
       </Table>
